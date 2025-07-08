@@ -35,7 +35,7 @@ api.interceptors.response.use(
       useAuthStore.getState().logout()
       window.location.href = '/login'
     }
-    return Promise.reject(error.response?.data || error.message)
+    return Promise.reject(error.response?.data || { success: false, message: error.message })
   }
 )
 
