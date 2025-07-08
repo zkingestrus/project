@@ -1,8 +1,11 @@
 # 使用官方Node.js运行时作为基础镜像
-FROM node:18-alpine
+FROM node:18-alpine AS base
 
 # 设置工作目录
 WORKDIR /app
+
+# 安装编译本地依赖所需的工具
+RUN apk add --no-cache python3 make g++
 
 # 复制package.json和package-lock.json
 COPY package*.json ./
