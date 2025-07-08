@@ -1,5 +1,5 @@
 # 使用官方Node.js运行时作为基础镜像
-FROM node:18-alpine AS base
+FROM node:18-slim AS base
 
 # 设置工作目录
 WORKDIR /app
@@ -10,7 +10,9 @@ COPY package*.json ./
 # 生产环境
 FROM base AS production
 # 安装 OpenSSL 1.1 兼容库，解决 Prisma 运行时依赖问题
-RUN apk add --no-cache openssl1.1-compat
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends openssl ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 ENV NODE_ENV=production
 # 安装生产依赖
 RUN npm ci --only=production
