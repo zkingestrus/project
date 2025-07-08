@@ -1,33 +1,29 @@
-# 使用官方Node.js运行时作为基础镜像
-FROM node:18-slim AS base
+# 使用官方 Node.js 运行时作为基础镜像
+FROM node:18-alpine AS base
 
 # 设置工作目录
 WORKDIR /app
 
-# 复制package.json和package-lock.json
+# 复制 package.json 和 lock
 COPY package*.json ./
 
-# 生产环境
+# 生产环境阶段
 FROM base AS production
-# 安装 OpenSSL 1.1 兼容库，解决 Prisma 运行时依赖问题
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends openssl ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
-ENV NODE_ENV=production
-# 安装生产依赖
+
+# 这里不再安装 openssl，直接设置 Prisma 引擎为 wasm
+ENV NODE_ENV=production \
+    PRISMA_CLIENT_ENGINE_TYPE=wasm
+
 RUN npm ci --only=production
 
 # 复制源代码
 COPY . .
 
-# 生成Prisma客户端
+# 生成 Prisma 客户端 (会自动生成 wasm 引擎)
 RUN npx prisma generate
 
-# 构建应用
+# 构建 TS
 RUN npm run build
 
-# 暴露端口
 EXPOSE 3001
-
-# 启动应用
 CMD ["npm", "start"] 
