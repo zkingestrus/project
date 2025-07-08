@@ -19,8 +19,8 @@ RUN npm ci --only=production
 # 复制源代码
 COPY . .
 
-# 生成 Prisma 客户端 (会自动生成 wasm 引擎)
-RUN npx prisma generate
+# 生成 Prisma 客户端 (仅 wasm 引擎)
+RUN npx prisma generate --wasm
 
 # 构建 TS
 RUN npm run build
