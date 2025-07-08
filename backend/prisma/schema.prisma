@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  nickname  String?
+  avatar    String?
+  
+  // 游戏相关字段
+  rank      Int      @default(1000)  // 段位分数
+  diamonds  Int      @default(100)   // 钻石数量
+  wins      Int      @default(0)     // 胜利次数
+  losses    Int      @default(0)     // 失败次数
+  
+  // 系统字段
+  isAdmin   Boolean  @default(false)
+  isOnline  Boolean  @default(false)
+  lastLogin DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // 关联关系
+  gameRecords GameRecord[]
+  matchQueue  MatchQueue?
+  
+  @@map("users")
+}
+
+model MatchQueue {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  rank      Int      // 当前段位
+  joinedAt  DateTime @default(now())
+  
+  @@map("match_queue")
+}
+
+model GameRoom {
+  id        String   @id @default(cuid())
+  status    GameStatus @default(WAITING)
+  
+  // 游戏信息
+  playerCount Int      @default(0)
+  maxPlayers  Int      @default(16)
+  
+  // 时间字段
+  createdAt DateTime @default(now())
+  startedAt DateTime?
+  endedAt   DateTime?
+  
+  // 关联关系
+  gameRecords GameRecord[]
+  teams       Team[]
+  
+  @@map("game_rooms")
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  roomId    String
+  room      GameRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  
+  teamNumber Int     // 队伍编号 1-8
+  avgRank    Int     // 队伍平均段位
+  
+  // 关联关系
+  gameRecords GameRecord[]
+  
+  @@map("teams")
+}
+
+model GameRecord {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  roomId    String
+  room      GameRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  
+  teamId    String
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  
+  // 游戏结果
+  result    GameResult?
+  score     Int        @default(0)
+  
+  // 奖励
+  diamondsEarned Int @default(0)
+  rankChange     Int @default(0)
+  
+  createdAt DateTime @default(now())
+  
+  @@map("game_records")
+}
+
+enum GameStatus {
+  WAITING    // 等待玩家
+  MATCHING   // 匹配中
+  READY      // 准备开始
+  PLAYING    // 游戏中
+  FINISHED   // 已结束
+}
+
+enum GameResult {
+  WIN        // 胜利
+  LOSE       // 失败
+  DRAW       // 平局
+} 
