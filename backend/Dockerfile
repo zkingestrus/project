@@ -14,7 +14,9 @@ FROM base AS production
 ENV NODE_ENV=production \
     PRISMA_CLIENT_ENGINE_TYPE=wasm
 
-RUN npm ci --only=production
+# 使用国内镜像源加速依赖安装
+RUN npm config set registry https://registry.npmmirror.com \
+    && npm ci --only=production --prefer-offline --progress=false --no-audit
 
 # 复制源代码
 COPY . .
