@@ -16,14 +16,18 @@ export const RegisterPage: React.FC = () => {
     setLoading(true)
     try {
       const response = await authAPI.register(values)
-      if (response.success) {
+      if (response.data.success) {
         setUser(response.data.user)
         setToken(response.data.token)
         message.success('注册成功！')
         navigate('/')
+      } else {
+        console.error(response.data.message)
+        message.error(response.data.message || '注册失败')
       }
     } catch (error: any) {
-      message.error(error.message || '注册失败')
+      console.error(error)
+      message.error(error.response?.data?.message || '注册时发生错误')
     } finally {
       setLoading(false)
     }

@@ -16,14 +16,18 @@ export const LoginPage: React.FC = () => {
     setLoading(true)
     try {
       const response = await authAPI.login(values)
-      if (response.success) {
+      if (response.data.success) {
         setUser(response.data.user)
         setToken(response.data.token)
         message.success('登录成功！')
         navigate('/')
+      } else {
+        console.error(response.data.message)
+        message.error(response.data.message || '登录失败')
       }
     } catch (error: any) {
-      message.error(error.message || '登录失败')
+      console.error(error)
+      message.error(error.response?.data?.message || '登录时发生错误')
     } finally {
       setLoading(false)
     }
