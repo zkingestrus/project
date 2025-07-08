@@ -9,6 +9,8 @@ COPY package*.json ./
 
 # 生产环境
 FROM base AS production
+# 安装 OpenSSL 1.1 兼容库，解决 Prisma 运行时依赖问题
+RUN apk add --no-cache openssl1.1-compat
 ENV NODE_ENV=production
 # 安装生产依赖
 RUN npm ci --only=production
