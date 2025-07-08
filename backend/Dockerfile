@@ -4,13 +4,13 @@ FROM node:18-alpine AS base
 # 设置工作目录
 WORKDIR /app
 
-# 安装编译本地依赖所需的工具
-RUN apk add --no-cache python3 make g++
-
 # 复制package.json和package-lock.json
 COPY package*.json ./
 
-# 安装依赖
+# 生产环境
+FROM base AS production
+ENV NODE_ENV=production
+# 安装生产依赖
 RUN npm ci --only=production
 
 # 复制源代码
