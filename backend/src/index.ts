@@ -23,6 +23,8 @@ export const prisma = new PrismaClient();
 
 // 创建Express应用
 const app = express();
+app.set('trust proxy', 1);  // 或 app.set('trust proxy', true);
+
 const server = createServer(app);
 
 // 创建Socket.io服务器
