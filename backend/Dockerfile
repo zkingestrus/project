@@ -1,6 +1,5 @@
-# ✅ 使用更兼容的镜像（基于 Debian，含 OpenSSL）
-FROM registry.cn-hangzhou.aliyuncs.com/nodejs-mirror/node:18-slim
 
+FROM node:18
 
 # 设置工作目录
 WORKDIR /app
