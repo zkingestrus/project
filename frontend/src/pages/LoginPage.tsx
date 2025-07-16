@@ -17,8 +17,8 @@ export const LoginPage: React.FC = () => {
     try {
       const response = await authAPI.login(values)
       if (response.data.success) {
-        setUser(response.data.user)
-        setToken(response.data.token)
+        setUser(response.data.data.user)
+        setToken(response.data.data.token)
         message.success('登录成功！')
         navigate('/')
       } else {

@@ -17,8 +17,8 @@ export const RegisterPage: React.FC = () => {
     try {
       const response = await authAPI.register(values)
       if (response.data.success) {
-        setUser(response.data.user)
-        setToken(response.data.token)
+        setUser(response.data.data.user)
+        setToken(response.data.data.token)
         message.success('注册成功！')
         navigate('/')
       } else {
