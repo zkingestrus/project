@@ -10,9 +10,8 @@ COPY package*.json ./
 # 生产环境阶段
 FROM base AS production
 
-# 这里不再安装 openssl，直接设置 Prisma 引擎为 wasm
-ENV NODE_ENV=production \
-    PRISMA_CLIENT_ENGINE_TYPE=wasm
+# 安装 OpenSSL 1.1 兼容库（Prisma 依赖）
+RUN apk add --no-cache openssl1.1-compat
 
 # 使用国内镜像源加速依赖安装
 RUN npm config set registry https://registry.npmmirror.com \
@@ -21,11 +20,11 @@ RUN npm config set registry https://registry.npmmirror.com \
 # 复制源代码
 COPY . .
 
-# 生成 Prisma 客户端 (仅 wasm 引擎)
-RUN npx prisma generate --wasm
+# 正确生成 Prisma 客户端（不加 --wasm）
+RUN npx prisma generate
 
 # 构建 TS
 RUN npm run build
 
 EXPOSE 3001
-CMD ["npm", "start"] 
+CMD ["npm", "start"]
