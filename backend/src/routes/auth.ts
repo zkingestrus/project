@@ -10,12 +10,17 @@ const router = Router();
 router.post('/register', asyncHandler(async (req, res) => {
   const { username, email, password, nickname } = req.body;
 
+  // ⭐️【新增日志】记录请求参数
+  console.log('注册请求参数:', { username, email, password, nickname });
+
   // 验证输入
   if (!username || !email || !password) {
+    console.warn('注册缺少参数:', { username, email, password });
     throw createError('用户名、邮箱和密码不能为空', 400);
   }
 
   if (password.length < 6) {
+    console.warn('注册密码太短:', { username, email });
     throw createError('密码至少需要6位', 400);
   }
 
@@ -28,6 +33,9 @@ router.post('/register', asyncHandler(async (req, res) => {
       ]
     }
   });
+
+  // ⭐️【新增日志】记录已存在用户
+  console.log('注册-已存在用户:', existingUser);
 
   if (existingUser) {
     throw createError('用户名或邮箱已存在', 409);
@@ -56,6 +64,9 @@ router.post('/register', asyncHandler(async (req, res) => {
     }
   });
 
+  // ⭐️【新增日志】注册成功
+  console.log('注册成功用户:', user);
+
   // 生成JWT token
   const token = generateToken(user.id);
 
@@ -73,7 +84,11 @@ router.post('/register', asyncHandler(async (req, res) => {
 router.post('/login', asyncHandler(async (req, res) => {
   const { username, password } = req.body;
 
+  // ⭐️【新增日志】记录登录请求参数
+  console.log('登录请求参数:', { username, password });
+
   if (!username || !password) {
+    console.warn('登录缺少参数:', { username, password });
     throw createError('用户名和密码不能为空', 400);
   }
 
@@ -86,6 +101,9 @@ router.post('/login', asyncHandler(async (req, res) => {
       ]
     }
   });
+
+  // ⭐️【新增日志】记录查找结果
+  console.log('登录-查找用户:', user);
 
   if (!user) {
     throw createError('用户名或密码错误', 401);
@@ -105,6 +123,9 @@ router.post('/login', asyncHandler(async (req, res) => {
       isOnline: true
     }
   });
+
+  // ⭐️【新增日志】登录成功
+  console.log('登录成功用户:', user);
 
   // 生成JWT token
   const token = generateToken(user.id);
@@ -132,11 +153,10 @@ router.post('/login', asyncHandler(async (req, res) => {
 
 // 用户登出
 router.post('/logout', asyncHandler(async (req, res) => {
-  // 这里可以添加token黑名单逻辑
   res.json({
     success: true,
     message: '登出成功'
   });
 }));
 
-export { router as authRouter }; 
+export { router as authRouter };

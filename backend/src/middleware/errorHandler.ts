@@ -14,10 +14,8 @@ export const errorHandler = (
   const statusCode = err.statusCode || 500;
   const message = err.message || '服务器内部错误';
 
-  // 开发环境下打印错误堆栈
-  if (process.env.NODE_ENV === 'development') {
-    console.error('❌ 错误:', err);
-  }
+  // 🚨 不管生产还是开发，都打印错误日志
+  console.error('❌ [全局错误日志]:', err);
 
   // 生产环境下不暴露敏感信息
   const response = {
@@ -38,4 +36,4 @@ export const createError = (message: string, statusCode: number = 500): ApiError
 
 export const asyncHandler = (fn: Function) => (req: Request, res: Response, next: NextFunction) => {
   Promise.resolve(fn(req, res, next)).catch(next);
-}; 
+};
