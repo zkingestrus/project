@@ -15,15 +15,15 @@ export const LoginPage: React.FC = () => {
   const onFinish = async (values: any) => {
     setLoading(true)
     try {
-      const response = await authAPI.login(values)
-      if (response.data.success) {
-        setUser(response.data.data.user)
-        setToken(response.data.data.token)
+      const response = await authAPI.login(values) as any
+      if (response.success) {
+        setUser(response.data.user)
+        setToken(response.data.token)
         message.success('登录成功！')
         navigate('/')
       } else {
-        console.error(response.data.message)
-        message.error(response.data.message || '登录失败')
+        console.error(response.message)
+        message.error(response.message || '登录失败')
       }
     } catch (error: any) {
       console.error(error)

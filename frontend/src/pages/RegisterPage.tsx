@@ -15,15 +15,15 @@ export const RegisterPage: React.FC = () => {
   const onFinish = async (values: any) => {
     setLoading(true)
     try {
-      const response = await authAPI.register(values)
-      if (response.data.success) {
-        setUser(response.data.data.user)
-        setToken(response.data.data.token)
+      const response = await authAPI.register(values) as any
+      if (response.success) {
+        setUser(response.data.user)
+        setToken(response.data.token)
         message.success('注册成功！')
         navigate('/')
       } else {
-        console.error(response.data.message)
-        message.error(response.data.message || '注册失败')
+        console.error(response.message)
+        message.error(response.message || '注册失败')
       }
     } catch (error: any) {
       console.error(error)
