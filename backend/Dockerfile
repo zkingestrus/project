@@ -1,5 +1,5 @@
-# 使用官方 Node.js 运行时作为基础镜像
-FROM node:18-alpine AS base
+# 使用更兼容的 Debian 系镜像（默认带 openssl）
+FROM node:18-slim
 
 # 设置工作目录
 WORKDIR /app
