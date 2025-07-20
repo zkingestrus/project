@@ -48,6 +48,7 @@ services:
       MATCH_COST_DIAMONDS: 10
       MATCH_TIMEOUT_SECONDS: 300
       PRISMA_CLIENT_ENGINE_TYPE: wasm
+      CORS_ORIGIN: http://106.53.187.98
     ports:
       - "3001:3001"
     depends_on:

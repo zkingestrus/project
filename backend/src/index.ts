@@ -27,10 +27,14 @@ app.set('trust proxy', 1);  // 或 app.set('trust proxy', true);
 
 const server = createServer(app);
 
+// CORS 配置
+const corsOrigin = process.env.CORS_ORIGIN || 
+  (process.env.NODE_ENV === 'production' ? false : 'http://localhost:5173');
+
 // 创建Socket.io服务器
 export const io = new Server(server, {
   cors: {
-    origin: process.env.NODE_ENV === 'production' ? false : ['http://localhost:5173'],
+    origin: corsOrigin,
     methods: ['GET', 'POST']
   }
 });
@@ -38,7 +42,7 @@ export const io = new Server(server, {
 // 中间件配置
 app.use(helmet());
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? false : ['http://localhost:5173'],
+  origin: corsOrigin,
   credentials: true
 }));
 
