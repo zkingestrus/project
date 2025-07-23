@@ -1,4 +1,5 @@
 import { Server, Socket } from 'socket.io';
+import jwt from 'jsonwebtoken';
 import { prisma } from '../index';
 import { MatchService } from '../services/MatchService';
 
@@ -18,15 +19,24 @@ export const setupSocketHandlers = (io: Server) => {
       try {
         const { token } = data;
         
-        // 这里应该验证JWT token，简化处理
         if (!token) {
           socket.emit('auth_error', { message: '未提供认证令牌' });
           return;
         }
 
-        // 简化的用户认证逻辑
-        const user = await prisma.user.findFirst({
-          where: { id: token }, // 实际应该解析JWT
+        let decoded: any;
+        try {
+          decoded = jwt.verify(token, process.env.JWT_SECRET!);
+        } catch (error) {
+          socket.emit('auth_error', { message: '无效的认证令牌' });
+          return;
+        }
+        
+        const userId = decoded.userId;
+
+        // 使用从JWT解析出的userId查找用户
+        const user = await prisma.user.findUnique({
+          where: { id: userId }, 
           select: {
             id: true,
             username: true,
