@@ -13,7 +13,7 @@ class SocketService {
     // 动态判断后端地址
     const VITE_SOCKET_URL = import.meta.env.VITE_SOCKET_URL
     const backendUrl = import.meta.env.PROD
-      ? `${window.location.protocol}//${window.location.hostname}:3001`
+      ? `${window.location.protocol}//${window.location.hostname}`
       : VITE_SOCKET_URL || 'http://localhost:3001';
 
     console.log('Socket connecting to:', backendUrl);
