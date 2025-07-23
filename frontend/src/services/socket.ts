@@ -43,6 +43,7 @@ class SocketService {
     this.socket.on('connect', () => {
       console.log('✅ Socket连接成功')
       useGameStore.getState().setConnected(true)
+      useGameStore.getState().setSocketAuthenticated(false) // 连接时重置认证状态
       this.reconnectAttempts = 0
       
       // 发送认证信息
@@ -55,11 +56,13 @@ class SocketService {
     this.socket.on('disconnect', () => {
       console.log('❌ Socket连接断开')
       useGameStore.getState().setConnected(false)
+      useGameStore.getState().setSocketAuthenticated(false) // 断开连接时重置
     })
 
     // 认证事件
     this.socket.on('authenticated', (data) => {
       console.log('✅ Socket认证成功', data.user)
+      useGameStore.getState().setSocketAuthenticated(true) // 认证成功后设置状态
     })
 
     this.socket.on('auth_error', (data) => {

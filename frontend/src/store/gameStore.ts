@@ -43,6 +43,7 @@ interface GameState {
   
   // Socket连接状态
   isConnected: boolean
+  isSocketAuthenticated: boolean
   
   // 操作方法
   setMatchQueue: (queue: MatchQueue) => void
@@ -50,6 +51,7 @@ interface GameState {
   setCurrentRoom: (room: GameRoom | null) => void
   setMyTeam: (team: GameTeam | null) => void
   setConnected: (connected: boolean) => void
+  setSocketAuthenticated: (authenticated: boolean) => void
   
   // 重置状态
   reset: () => void
@@ -64,7 +66,8 @@ const initialState = {
   isMatching: false,
   currentRoom: null,
   myTeam: null,
-  isConnected: false
+  isConnected: false,
+  isSocketAuthenticated: false
 }
 
 export const useGameStore = create<GameState>((set) => ({
@@ -75,6 +78,7 @@ export const useGameStore = create<GameState>((set) => ({
   setCurrentRoom: (currentRoom) => set({ currentRoom }),
   setMyTeam: (myTeam) => set({ myTeam }),
   setConnected: (isConnected) => set({ isConnected }),
+  setSocketAuthenticated: (authenticated) => set({ isSocketAuthenticated: authenticated }),
   
   reset: () => set(initialState)
 })) 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, Button, Alert, Spin, Progress, message } from 'antd'
 import { useAuthStore } from '../store/authStore'
 import { useGameStore } from '../store/gameStore'
@@ -7,8 +7,21 @@ import socketService from '../services/socket'
 
 export const MatchPage: React.FC = () => {
   const { user, updateUser } = useAuthStore()
-  const { matchQueue, setMatchQueue, isMatching, setMatching } = useGameStore()
+  const { 
+    matchQueue, 
+    setMatchQueue, 
+    isMatching, 
+    setMatching,
+    isSocketAuthenticated,
+    isConnected,
+  } = useGameStore()
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (!isConnected) {
+      socketService.connect()
+    }
+  }, [isConnected])
 
   // 加入匹配
   const handleJoinMatch = async () => {
@@ -21,7 +34,6 @@ export const MatchPage: React.FC = () => {
     setMatching(true)
     try {
       // 推荐用socketService，后端也支持API
-      socketService.connect()
       socketService.joinMatchQueue()
       message.success('已加入匹配队列，等待其他玩家...')
       setMatchQueue({ ...matchQueue, inQueue: true })
@@ -100,8 +112,14 @@ export const MatchPage: React.FC = () => {
               离开匹配队列
             </Button>
           ) : (
-            <Button type="primary" loading={loading} onClick={handleJoinMatch} size="large">
-              加入匹配（消耗10钻石）
+            <Button 
+              type="primary" 
+              loading={loading || !isSocketAuthenticated} 
+              onClick={handleJoinMatch} 
+              size="large"
+              disabled={!isSocketAuthenticated}
+            >
+              {isSocketAuthenticated ? '加入匹配（消耗10钻石）' : '正在连接...'}
             </Button>
           )}
           {isMatching && <Spin className="mt-2" tip="等待其他玩家加入..." />}
