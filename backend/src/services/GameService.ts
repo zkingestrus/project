@@ -70,7 +70,7 @@ export class GameService {
 
           // 更新用户统计
           const userUpdateData: any = {
-            rank: { increment: rankChange },
+            // rank: { increment: rankChange }, // 根据需求，不再结算段位
             diamonds: { increment: diamondEarned },
           };
 

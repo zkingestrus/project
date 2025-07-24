@@ -38,6 +38,7 @@ services:
       - PORT=3001
       - NODE_ENV=production
       - CORS_ORIGIN=http://106.53.187.98
+      - MATCH_COST_DIAMONDS=22
     ports:
       - "3001:3001"
     depends_on:

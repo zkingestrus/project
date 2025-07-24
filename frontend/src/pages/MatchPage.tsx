@@ -5,6 +5,8 @@ import { useGameStore } from '../store/gameStore'
 import { gameAPI } from '../services/api'
 import socketService from '../services/socket'
 
+const MATCH_COST = 22;
+
 export const MatchPage: React.FC = () => {
   const { user, updateUser } = useAuthStore()
   const { 
@@ -26,7 +28,7 @@ export const MatchPage: React.FC = () => {
   // 加入匹配
   const handleJoinMatch = async () => {
     if (!user) return
-    if (user.diamonds < 10) {
+    if (user.diamonds < MATCH_COST) {
       message.error('钻石不足，无法参与匹配！')
       return
     }
@@ -119,7 +121,7 @@ export const MatchPage: React.FC = () => {
               size="large"
               disabled={!isSocketAuthenticated}
             >
-              {isSocketAuthenticated ? '加入匹配（消耗10钻石）' : '正在连接...'}
+              {isSocketAuthenticated ? `加入匹配（消耗${MATCH_COST}钻石）` : '正在连接...'}
             </Button>
           )}
           {isMatching && <Spin className="mt-2" tip="等待其他玩家加入..." />}
